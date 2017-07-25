@@ -28,7 +28,7 @@ def parse_article():
   if not article_data:
     return jsonify(status="Failure", message="No data param \'Ariticle Data\' received")
 
-  article_data_tokens = article_data.split('\n')
+  article_data_tokens = article_data.split('.')
   predictions = []
   classifier = language_models.get_classifer()
   for line in article_data_tokens:
