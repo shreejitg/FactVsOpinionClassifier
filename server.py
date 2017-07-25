@@ -29,12 +29,15 @@ def parse_article():
     return jsonify(status="Failure", message="No data param \'Ariticle Data\' received")
 
   article_data_tokens = article_data.split('\n')
-  for index in range(len(article_data_tokens)):
-    article_data_tokens[index] = article_data_tokens[index].strip()
+  predictions = []
+  classifier = language_models.get_classifer()
+  for line in article_data_tokens:
+    test_sent_features = language_models.word_feats(line.strip())
+    predicted_class = classifier.classify(test_sent_features)
+    predictions.append(predicted_class)
   
   # Make call to the language model
-
-  return jsonify(status="Success", tokenized_words=article_data_tokens)
+  return jsonify(status="Success", predicted_classes=predictions)
 
 def startServer():
   app.debug=True
