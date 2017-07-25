@@ -25,5 +25,17 @@ def get_ukranian_facts():
     with open("Datasets/Processed/Facts/facts2.csv", "w") as f:
         f.writelines(output)
 
+def get_washington_facts():
+    r = urllib.urlopen("http://www.50states.com/facts/washington.htm").read()
+    soup = BeautifulSoup(r, 'html.parser')
+    facts = soup.find_all("ol", class_="stripedList")[0].extract()
+    text = facts.get_text()
+    cleaned_text = re.sub("(<!--.*?-->)", "", text, flags=re.DOTALL)
+    output = [(line + '\n').encode('utf-8') for line in cleaned_text.split('\n') if len(line) > 6]
+    print output
+    with open("Datasets/Processed/Facts/facts3.csv", "w") as f:
+        f.writelines(output)
+
 if __name__ == "__main__":
-    get_ukranian_facts()
+    # get_ukranian_facts()
+    get_washington_facts()

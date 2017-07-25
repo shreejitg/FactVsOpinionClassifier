@@ -4,6 +4,8 @@ from nltk.corpus import stopwords
 stopset = list(set(stopwords.words('english')))
 from os import listdir
 from os.path import isfile, join
+import pickle
+import os.path
 
 def word_feats(words):
     return dict([(word.lower(), True) for word in words.split() if word not in stopset])
@@ -16,7 +18,7 @@ def get_facts():
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
                 examples.append((word_feats(line), "fact"))
-    print examples
+    # print examples
     return examples
 
 def get_opinions():
@@ -27,10 +29,10 @@ def get_opinions():
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
                 examples.append((word_feats(line), "opinion"))
-    print examples
+    # print examples
     return examples
 
-if __name__ == "__main__":
+def get_data():
     train_portion = .8
     facts = get_facts()
     n_train_facts = int(train_portion * len(facts))
@@ -44,7 +46,30 @@ if __name__ == "__main__":
     test_facts = facts[n_train_facts:]
     test_opinions = opinions[n_train_opinions:]
 
-    classifier = NaiveBayesClassifier.train(train_facts + train_opinions)
+    return (train_facts, train_opinions, test_facts, test_opinions)
+
+def generate_classifier(training_data):
+    classifier = NaiveBayesClassifier.train(training_data)
+    return classifier
+
+def get_classifer():
+    pkl_file = "model.pkl"
+    if os.path.exists(pkl_file):
+        print "Reusing model file"
+        with open(pkl_file) as f:
+            classifier = pickle.load(f)
+            return classifier
+    else:
+        train_facts, train_opinions, test_facts, test_opinions = get_data()
+        print "Generating model file afresh"
+        classifier = generate_classifier(train_facts + train_opinions)
+        with open(pkl_file, "wb") as f:
+            pickle.dump(classifier, f)
+        return classifier
+
+if __name__ == "__main__":
+    train_facts, train_opinions, test_facts, test_opinions = get_data()
+    classifier = get_classifer()
 
     print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
     classifier.show_most_informative_features()
