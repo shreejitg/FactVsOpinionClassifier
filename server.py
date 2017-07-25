@@ -2,11 +2,13 @@
 import json
 from flask_httpauth import HTTPBasicAuth
 from flask import Flask, Blueprint, g, session, redirect, url_for, escape, request, render_template, jsonify
+from flask_cors import CORS, cross_origin
 
 # User imports
 import language_models
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 auth = HTTPBasicAuth()
