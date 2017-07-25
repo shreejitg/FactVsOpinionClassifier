@@ -10,34 +10,37 @@ import os.path
 def word_feats(words):
     return dict([(word.lower(), True) for word in words.split() if word not in stopset])
 
-def get_facts():
+def get_raw_facts():
     examples = []
     mypath = "Datasets/Processed/Facts/"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     for file in onlyfiles:
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
-                examples.append((word_feats(line), "fact"))
+                examples.append(line)
     # print examples
     return examples
 
-def get_opinions():
+def get_facts():
+    return [(word_feats(example[0]), "fact") for example in get_raw_facts()]
+
+def get_raw_opinions():
     examples = []
     mypath = "Datasets/Raw/review_polarity/txt_sentoken/pos"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))][:5000]
     for file in onlyfiles:
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
-                examples.append((word_feats(line), "opinion"))
+                examples.append(line)
     # print examples
     return examples
 
-def get_data():
-    train_portion = .8
-    facts = get_facts()
+def get_opinions():
+    return [(word_feats(example[0]), "opinion") for example in get_raw_opinions()]
+
+def split_traintest(train_portion, facts, opinions):
     n_train_facts = int(train_portion * len(facts))
 
-    opinions = get_opinions()
     n_train_opinions = int(train_portion * len(opinions))
 
     train_facts = facts[:n_train_facts]
@@ -47,6 +50,12 @@ def get_data():
     test_opinions = opinions[n_train_opinions:]
 
     return (train_facts, train_opinions, test_facts, test_opinions)
+
+def get_raw_data():
+    return split_traintest(0.8, get_raw_facts(), get_raw_opinions())
+
+def get_data():
+    return split_traintest(0.8, get_facts(), get_opinions())
 
 def generate_classifier(training_data):
     classifier = NaiveBayesClassifier.train(training_data)
@@ -67,9 +76,16 @@ def get_classifer():
             pickle.dump(classifier, f)
         return classifier
 
-if __name__ == "__main__":
-    train_facts, train_opinions, test_facts, test_opinions = get_data()
+def predict(sentences):
     classifier = get_classifer()
+    return [classifier.classify(word_feats(sentence)) for sentence in sentences]
 
-    print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
-    classifier.show_most_informative_features()
+if __name__ == "__main__":
+    # train_facts, train_opinions, test_facts, test_opinions = get_data()
+    # classifier = get_classifer()
+    #
+    # print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
+    # classifier.show_most_informative_features()
+
+    print predict(["George Washington was the first president of the United States of America",
+                   "I hate this movie"])

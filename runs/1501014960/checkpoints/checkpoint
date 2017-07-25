@@ -1,0 +1,4 @@
+model_checkpoint_path: "/home/shreejit/PycharmProjects/Hackathon/runs/1501014960/checkpoints/model-300"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501014960/checkpoints/model-100"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501014960/checkpoints/model-200"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501014960/checkpoints/model-300"
