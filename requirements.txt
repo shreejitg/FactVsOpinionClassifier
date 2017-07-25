@@ -12,3 +12,5 @@ protobuf==3.3.0
 six==1.10.0
 tensorflow==1.2.1
 Werkzeug==0.12.2
+Flask==0.12.2
+Flask-HTTPAuth==3.2.2
