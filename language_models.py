@@ -1,4 +1,5 @@
 from nltk.classify import NaiveBayesClassifier
+from nltk.classify.util import accuracy
 from nltk.corpus import stopwords
 stopset = list(set(stopwords.words('english')))
 from os import listdir
@@ -21,7 +22,7 @@ def get_facts():
 def get_opinions():
     examples = []
     mypath = "Datasets/Raw/review_polarity/txt_sentoken/pos"
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))][:100]
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))][:5000]
     for file in onlyfiles:
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
@@ -30,11 +31,20 @@ def get_opinions():
     return examples
 
 if __name__ == "__main__":
+    train_portion = .8
     facts = get_facts()
-    opinions = get_opinions()
+    n_train_facts = int(train_portion * len(facts))
 
-    classifier = NaiveBayesClassifier.train(facts + opinions)
-    print classifier.classify(word_feats("This was made yesterday"))
-    print classifier.classify(word_feats("Significant tension"))
-    print classifier.classify(word_feats("Obamacare is a horrible decision"))
-    # classifier.show_most_informative_features()
+    opinions = get_opinions()
+    n_train_opinions = int(train_portion * len(opinions))
+
+    train_facts = facts[:n_train_facts]
+    train_opinions = opinions[:n_train_opinions]
+
+    test_facts = facts[n_train_facts:]
+    test_opinions = opinions[n_train_opinions:]
+
+    classifier = NaiveBayesClassifier.train(train_facts + train_opinions)
+
+    print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
+    classifier.show_most_informative_features()
