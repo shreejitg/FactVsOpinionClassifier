@@ -18,25 +18,33 @@ def get_raw_facts():
         with open(join(mypath, file), "r") as f:
             for line in f.readlines():
                 examples.append(line)
-    # print examples
+    print "Examples for facts:" + str(len(examples))
+    print examples[:100]
     return examples
 
 def get_facts():
-    return [(word_feats(example[0]), "fact") for example in get_raw_facts()]
+    return [(word_feats(example), "fact") for example in get_raw_facts()]
 
 def get_raw_opinions():
     examples = []
-    mypath = "Datasets/Raw/review_polarity/txt_sentoken/pos"
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))][:5000]
+    mypos_path = "Datasets/Raw/review_polarity/txt_sentoken/pos"
+    onlyfiles = [f for f in listdir(mypos_path) if isfile(join(mypos_path, f))][:20000]
     for file in onlyfiles:
-        with open(join(mypath, file), "r") as f:
+        with open(join(mypos_path, file), "r") as f:
             for line in f.readlines():
                 examples.append(line)
-    # print examples
+    mypos_path = "Datasets/Raw/review_polarity/txt_sentoken/neg"
+    onlyfiles = [f for f in listdir(mypos_path) if isfile(join(mypos_path, f))][:20000]
+    for file in onlyfiles:
+        with open(join(mypos_path, file), "r") as f:
+            for line in f.readlines():
+                examples.append(line)
+    print "Examples for opinions:" + str(len(examples))
+    print examples[:100]
     return examples
 
 def get_opinions():
-    return [(word_feats(example[0]), "opinion") for example in get_raw_opinions()]
+    return [(word_feats(example), "opinion") for example in get_raw_opinions()]
 
 def split_traintest(train_portion, facts, opinions):
     n_train_facts = int(train_portion * len(facts))
@@ -81,11 +89,11 @@ def predict(sentences):
     return [classifier.classify(word_feats(sentence)) for sentence in sentences]
 
 if __name__ == "__main__":
-    # train_facts, train_opinions, test_facts, test_opinions = get_data()
-    # classifier = get_classifer()
-    #
-    # print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
-    # classifier.show_most_informative_features()
+    train_facts, train_opinions, test_facts, test_opinions = get_data()
+    classifier = get_classifer()
+
+    print 'accuracy:', accuracy(classifier, test_facts + test_opinions)
+    classifier.show_most_informative_features()
 
     print predict(["George Washington was the first president of the United States of America",
                    "I hate this movie"])

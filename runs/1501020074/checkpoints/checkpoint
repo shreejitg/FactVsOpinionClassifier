@@ -1,0 +1,6 @@
+model_checkpoint_path: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-6500"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-4500"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-5000"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-5500"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-6000"
+all_model_checkpoint_paths: "/home/shreejit/PycharmProjects/Hackathon/runs/1501020074/checkpoints/model-6500"
