@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 
 # User imports
 import language_models
+import neuralnet_classifier
 
 app = Flask(__name__)
 CORS(app)
@@ -41,9 +42,27 @@ def parse_article():
   # Make call to the language model
   return jsonify(status="Success", predicted_classes=predictions)
 
+@app.route('/tf_parse_article', methods=['GET', 'POST'])
+def tf_parse_article():
+  print("Function tf_parse_article invoked")
+  if not request.data:
+    return jsonify(status="Failure", message="No json data received")
+
+  content = json.loads(request.data)
+  article_data = content.get('article_data')
+
+  if not article_data:
+    return jsonify(status="Failure", message="No data param \'Ariticle Data\' received")
+
+  article_data_tokens = article_data.split('.')
+  predictions = neuralnet_classifier.predict(article_data_tokens)
+  
+  # Make call to the language model
+  return jsonify(status="Success", predicted_classes=predictions)
+
 def startServer():
   app.debug=True
   app.run()
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=8080)
+  app.run(host='127.0.0.1', port=5000)
